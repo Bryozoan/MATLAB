@@ -191,6 +191,7 @@ function varargout = climchg(vTemp, vTime, sIndex, varargin)
         otherwise           
             error('Your sIndex value is not supported. Try one of the following: -slope to target-slope of interval-trend since 1970-');
                         
+          
             
     end
 
