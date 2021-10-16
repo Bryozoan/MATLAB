@@ -35,9 +35,9 @@ function varargout = climchg(vTemp, vTime, sIndex, varargin)
                 %assign data to output vectors
     
                 vStartTime(i) = vTiCut(i);
-                vSlope(i) = vCoeffs(1);
-                vLB(i) = mConfInt(1,1);
-                vUB(i) = mConfInt(2,1);
+                vSlope(i) = vCoeffs(1) * 10;
+                vLB(i) = mConfInt(1,1) * 10;
+                vUB(i) = mConfInt(2,1) * 10;
             end
         
             % set up variables for plotting
@@ -57,10 +57,10 @@ function varargout = climchg(vTemp, vTime, sIndex, varargin)
                 title(sTitle);            
                 dIfVariable = vTime(2) - vTime(1);
                     if dIfVariable == 1
-                        sYLabel = sprintf('Slope from date to %.0f (by Year)',...
+                        sYLabel = sprintf('Slope from date to %.0f (C° per decade)\n annual data',...
                             dTarget);
                     else 
-                        sYLabel = sprintf('Slope from date to %.0f (by Month)',...
+                        sYLabel = sprintf('Slope from date to %.0f (C° per decade)\n monthly data',...
                             dTarget);                
                     end
                 ylabel(sYLabel, 'FontSize', 10);
@@ -111,9 +111,9 @@ function varargout = climchg(vTemp, vTime, sIndex, varargin)
                 mConfInt = confint(fitresult);
 
                 %assign data to output vectors                 
-                vSlope(i) = vCoeffs(1);          
-                vUB(i) = mConfInt(2,1);
-                vLB(i) = mConfInt(1,1);
+                vSlope(i) = vCoeffs(1) * 10;          
+                vUB(i) = mConfInt(2,1) * 10;
+                vLB(i) = mConfInt(1,1) * 10;
                 %Set up the end date for each interval
                 vEndCell(i) = iWin + i - 1;
                 vEndTime(i) = vTime(vEndCell(i));
@@ -136,14 +136,14 @@ function varargout = climchg(vTemp, vTime, sIndex, varargin)
             hold off;
             %change data labels
                 xlabel('Date', 'FontSize', 10);
-                sTitle = sprintf('slope of interval');
+                sTitle = sprintf('slope of interval size %.0f',dInterval);
                 title(sTitle);            
                 dIfVariable = vTime(2) - vTime(1);
                     if dIfVariable == 1
-                        sYLabel = sprintf('Slope of interval size %.0f (by Year)',...
+                        sYLabel = sprintf('Slope of interval size %.0f, C° per decade\n (yearly data)',...
                             dInterval);
                     else 
-                        sYLabel = sprintf('Slope of interval size %.0f (by Month)',...
+                        sYLabel = sprintf('Slope of interval size %.0f, C° per decade\n (monthly data)',...
                             dInterval);                
                     end
                 ylabel(sYLabel, 'FontSize', 10);
@@ -164,11 +164,19 @@ function varargout = climchg(vTemp, vTime, sIndex, varargin)
 
             %plot data and fit
             figure( "Name", 'Trend Since 1970');
-            h = plot(fitresult, vxData, vyData, 'predobs');
-            %legend( h, 'vTempHC_Annual vs. vTimeHC_Annual',...
-            %    'untitled fit 1', 'Lower bounds (untitled fit 1)',...
-            %    'Upper bounds (untitled fit 1)', 'Location',...
-            %    'NorthEast', 'Interpreter', 'none' );
+                plot(fitresult, vxData, vyData, 'predobs');
+            %change data labels
+                xlabel('Date', 'FontSize', 10);
+                sTitle = sprintf('Trend Since 1970');
+                title(sTitle);            
+                dIfVariable = vTime(2) - vTime(1);
+                    if dIfVariable == 1
+                        sYLabel = sprintf('Average Annual Temperature');
+                    else 
+                        sYLabel = sprintf('Average Monthly Temperature');                
+                    end
+                ylabel(sYLabel, 'FontSize', 10);
+
             
             %fitting stats
             vCoeffs = coeffvalues(fitresult);
@@ -176,8 +184,8 @@ function varargout = climchg(vTemp, vTime, sIndex, varargin)
 
             dSlope = vCoeffs(1);
             dIntercept = vCoeffs(2);
-            vUB = mConfInt(1,1);
-            vLB = mConfInt(2,1);
+            vUB = mConfInt(2,1);
+            vLB = mConfInt(1,1);
             
             %fprintf('slope is %.3G\n --> 95 percent confindence interval of [%.3G, %.3G]\n',dSlope,vUB,vLB);
             
@@ -191,8 +199,7 @@ function varargout = climchg(vTemp, vTime, sIndex, varargin)
         otherwise           
             error('Your sIndex value is not supported. Try one of the following: -slope to target-slope of interval-trend since 1970-');
                         
-          
-            
+         
     end
 
  
