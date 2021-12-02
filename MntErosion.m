@@ -67,5 +67,5 @@ dArea = sum(mTopofil,"all");
 %% this is suppose to pick reasonable control points... what does that mean?
 %are you trying to tell me that there is some intrisic value to these
 %control points? maybe elevation over a certain point? IDK 
-
+ 
 
