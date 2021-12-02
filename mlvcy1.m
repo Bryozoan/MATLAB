@@ -27,7 +27,7 @@ switch sIndex
         % produce the autospectrum
         dNPT = 2^nextpow2(length(vInData)); 
         [vPower, vFrequency] = periodogram(vDtData,[], dNPT, dSamFreq);
-%plot and adjust the axis to show relevant information
+        %plot and adjust the axis to show relevant information
         figure('color', 'white')
             plot(vFrequency, vPower), grid
             dMaxPower = max(vPower);
