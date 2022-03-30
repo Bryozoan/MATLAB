@@ -19,15 +19,17 @@ mTopo = double(mTopo);
 
 % median filter the image 
 mTopofil = medfilt2(mTopo, [5 5]);
+mTopoCP = medfilt2(mTopo, [5 5]);
 
 
 %meshlsrm(mTopo,R);
-[LON, LAT] = meshgrid(R.LongitudeLimits(1)+R.CellExtentInLongitude*.5:R.CellExtentInLongitude:R.LongitudeLimits(2)-R.CellExtentInLongitude*.5, ...
-    R.LatitudeLimits(1)+R.CellExtentInLongitude*.5:R.CellExtentInLatitude:R.LatgitudeLimits(2)-R.CellExtentInLatitude*.5);
-
+% [LON, LAT] = meshgrid(R.LongitudeLimits(1)+R.CellExtentInLongitude*.5:R.CellExtentInLongitude:R.LongitudeLimits(2)-R.CellExtentInLongitude*.5, ...
+%     R.LatitudeLimits(1)+R.CellExtentInLongitude*.5:R.CellExtentInLatitude:R.LatgitudeLimits(2)-R.CellExtentInLatitude*.5);
+[LON,LAT] = meshgrid(R.LongitudeLimits(1)+R.CellExtentInLongitude*0.5:R.CellExtentInLongitude:R.LongitudeLimits(2)-R.CellExtentInLongitude*0.5,...
+    R.LatitudeLimits(1)+R.CellExtentInLatitude*0.5:R.CellExtentInLatitude:R.LatitudeLimits(2)-R.CellExtentInLatitude*0.5);
 
 surf(LON,LAT,mTopo)
-coromap jet
+colormap jet
 shading interp
 axis equal, view(0,90)
 colorbar
@@ -51,7 +53,7 @@ mYonLine = m * LON + b;
 mTopofil(LAT > mYonLine) = 0;
 
 % set everything to zero to the right of the max elevation
-for i = 1:size(mtopofil,1)
+for i = 1:size(mTopofil,1)
     vRow = mTopofil(i, :);
     dMaxRow = max(vRow);
     iIdx = find(vRow == dMaxRow, 1, 'last');
@@ -64,8 +66,29 @@ end
 dArea = sum(mTopofil,"all");
 
 
-%% this is suppose to pick reasonable control points... what does that mean?
-%are you trying to tell me that there is some intrisic value to these
-%control points? maybe elevation over a certain point? IDK 
- 
+%% insert test mtsErosion here
+
+%% decide where the test points are
+
+%cutoff of below 
+mLoFlow = log(1 + flowac) > 1 & mTopofil > 5;
+
+%remove groups of points. this will bick the max point
+mHiPoint = zeros(size(mLoFlow));
+
+for i = 3:size(mTopofil,1)-2
+    for j = 1:size(mTopofil,2)-2
+        mNeighbors = Af1(i-2:i+2, j-2:j+2);
+        if mNeighbors(3,3) == max(mNeighbors, 'all')
+            mHiPoint(i,j) = mHiPoint(i,j) + 1;
+        end
+    end
+end
+
+
+vXvals = LON(mLoFlow);
+vYvals = LAT(mLoFlow);
+vZvals = log(1+ flowac(mLoFlow));
+
+
 
